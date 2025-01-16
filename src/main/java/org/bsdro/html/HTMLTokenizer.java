@@ -4,6 +4,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class HTMLTokenizer {
     private static final String LINK_PREFIX = "a href=";
@@ -81,7 +82,9 @@ public class HTMLTokenizer {
                     } catch (URISyntaxException e) {
                         return null;
                     }
-                }).toArray(String[]::new);
+                })
+                .filter(Objects::nonNull)
+                .toArray(String[]::new);
     }
 
     private enum TokenizerState { INITIAL, TEXT, TAG, SINGLE_QUOTED_STRING, DOUBLE_QUOTED_STRING}
