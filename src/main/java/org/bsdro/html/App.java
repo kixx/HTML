@@ -1,4 +1,4 @@
-package org.bsdro.http;
+package org.bsdro.html;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package org.bsdro.http;
+package org.bsdro.html;
 
 public class HTMLToken {
     private final TokenType type;
