@@ -1,9 +1,13 @@
 package org.bsdro.html;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class HTMLTokenizer {
+    private static final String LINK_PREFIX = "a href=";
+
     public static List<HTMLToken> parse(String htmlString) {
         List<HTMLToken> tokens = new ArrayList<>();
         TokenizerState state = TokenizerState.INITIAL;
@@ -58,6 +62,26 @@ public class HTMLTokenizer {
 
 
         return tokens;
+    }
+
+    public static String[] filterLinks(List<HTMLToken> tokens, String hostname) {
+
+        return tokens.stream()
+                .filter(token -> token.getType() == TokenType.TAG)
+                .filter(token -> token.getContentAsString().startsWith(LINK_PREFIX))
+                .map(token -> token.getContentAsString().substring(8, token.getContentAsString().length() - 1))
+                .filter(url -> url.startsWith("http://") || url.startsWith("/"))
+                .map(url -> {
+                    try {
+                        URI uri = new URI(url);
+                        String host = uri.getHost();
+                        String path = uri.getPath();
+
+                        return host != null ? host + path : hostname + path;
+                    } catch (URISyntaxException e) {
+                        return null;
+                    }
+                }).toArray(String[]::new);
     }
 
     private enum TokenizerState { INITIAL, TEXT, TAG, SINGLE_QUOTED_STRING, DOUBLE_QUOTED_STRING}
